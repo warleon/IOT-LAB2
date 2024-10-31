@@ -1,0 +1,42 @@
+const int Trigger = 3;   //Pin digital 3 para el Trigger del sensor
+const int Echo = 4;      //Pin digital 4 para el Echo del sensor
+const int ledRojo = 2;   //Pin digital 2 para el LED rojo
+
+void setup() {
+  Serial.begin(9600);        //Iniciamos la comunicación serial
+  pinMode(Trigger, OUTPUT);  //Pin del Trigger como salida
+  pinMode(Echo, INPUT);      //Pin del Echo como entrada
+  pinMode(ledRojo, OUTPUT);  //Pin del LED rojo como salida
+  digitalWrite(Trigger, LOW);//Inicializamos el Trigger en bajo
+}
+
+void loop() {
+
+  long t;  //Tiempo que tarda el eco
+  long d;  //Distancia en centímetros
+
+  //Enviar pulso de Trigger
+  digitalWrite(Trigger, HIGH);
+  delayMicroseconds(10);       //Pulso de 10us
+  digitalWrite(Trigger, LOW);
+
+  //Obtenemos el tiempo que tarda el eco en volver
+  t = pulseIn(Echo, HIGH);     
+  d = t / 59;                  //Convertimos el tiempo a distancia en cm
+
+  Serial.print("Distancia: ");
+  Serial.print(d);             //Mostramos la distancia en cm
+  Serial.println(" cm");
+
+  //Si la distancia es menor a 20 cm, hacemos que el LED rojo parpadee
+  if (d < 20) {
+    digitalWrite(ledRojo, HIGH); //Encender el LED rojo
+    delay(500);                  //Esperar 500ms
+    digitalWrite(ledRojo, LOW);  //Apagar el LED rojo
+    delay(500);                  //Esperar 500ms
+  } else {
+    digitalWrite(ledRojo, LOW);  //Apagar el LED rojo si la distancia es mayor a 20 cm
+  }
+
+  delay(100);  //Pausa de 100ms para el próximo ciclo
+}
